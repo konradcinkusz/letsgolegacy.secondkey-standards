@@ -110,6 +110,14 @@ internal static partial class MarkdownBodyParser
                 continue;
             }
 
+            // The body is copied into the skill's references/ directory, where a link relative to
+            // standards/ would point nowhere.
+            foreach (Match link in RelativeLink().Matches(line))
+            {
+                issues.Add((lineNumber, $"relative link \"{link.Groups["target"].Value}\" would break in the generated skill; "
+                    + "use an absolute URL, or cite another rule by its id"));
+            }
+
             Append(line, i);
         }
 
@@ -149,4 +157,7 @@ internal static partial class MarkdownBodyParser
 
     [GeneratedRegex("^ {0,3}##\\s+(?<text>.*?)\\s*#*\\s*$", RegexOptions.CultureInvariant)]
     private static partial Regex HeadingTwo();
+
+    [GeneratedRegex(@"\]\((?!https?://|mailto:|#)(?<target>[^)\s]+)\)", RegexOptions.CultureInvariant)]
+    private static partial Regex RelativeLink();
 }

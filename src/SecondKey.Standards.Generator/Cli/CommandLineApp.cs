@@ -23,9 +23,25 @@ public static class CommandLineApp
         };
         validate.SetAction(parseResult => Validate(context, parseResult.GetValue(rootOption)));
 
+        var checkOption = new Option<bool>("--check")
+        {
+            Description = "Write nothing; fail if generated/ differs from what the sources produce. This is what CI runs.",
+        };
+
+        var generate = new Command(
+            "generate",
+            "Compile standards/ into generated/: the agent skill, .editorconfig and .globalconfig, the NuGet package "
+            + "project, and the manifest. Refuses a content change to a released version.")
+        {
+            rootOption,
+            checkOption,
+        };
+        generate.SetAction(parseResult => Generate(context, parseResult.GetValue(rootOption), parseResult.GetValue(checkOption)));
+
         var root = new RootCommand("Second Key standards: validate the rules and compile them for the agent and the gate.")
         {
             validate,
+            generate,
         };
 
         var result = root.Parse(args);
@@ -61,6 +77,47 @@ public static class CommandLineApp
 
         var mapped = standards.Rules.Count(rule => rule.Diagnostics.Count > 0);
         reporter.Info($"{standards.Rules.Count} rules are valid ({mapped} mapped to gate diagnostics).");
+        return ExitCodes.Success;
+    }
+
+    private static int Generate(CliContext context, DirectoryInfo? rootDirectory, bool check)
+    {
+        var reporter = context.CreateReporter();
+        if (!TryOpen(context, rootDirectory, reporter, out var layout, out var pack))
+        {
+            return ExitCodes.CouldNotRun;
+        }
+
+        var result = Generation.PackGenerator.Build(layout, pack);
+        if (!result.Succeeded)
+        {
+            reporter.Problems(result.Problems);
+            reporter.Info($"{result.Problems.Count} problem(s); nothing was generated.");
+            return ExitCodes.CheckFailed;
+        }
+
+        var tree = result.Tree!;
+        if (check)
+        {
+            var differences = Generation.TreeSync.Compare(layout, tree);
+            if (differences.Count == 0)
+            {
+                reporter.Info($"{Generation.GeneratedTree.Directory}/ is up to date ({tree.Files.Count} files, standards {pack.Version}).");
+                return ExitCodes.Success;
+            }
+
+            reporter.Problems(differences
+                .Select(difference => new Diagnostics.Problem(
+                    difference.Path,
+                    null,
+                    $"{difference.Kind.ToString().ToLowerInvariant()}: the committed file does not match the sources"))
+                .ToList());
+            reporter.Info($"{Generation.GeneratedTree.Directory}/ is out of date ({differences.Count} file(s)). Run: secondkey-standards generate");
+            return ExitCodes.CheckFailed;
+        }
+
+        var (written, removed) = Generation.TreeSync.Write(layout, tree);
+        reporter.Info($"Generated standards {pack.Version}: {tree.Files.Count} files ({written} written, {removed} removed).");
         return ExitCodes.Success;
     }
 

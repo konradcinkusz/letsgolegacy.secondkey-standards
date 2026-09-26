@@ -71,7 +71,7 @@ chmod +x "${HOOK_DST}"
 green "  pre-commit installed → ${HOOK_DST}"
 
 # ── 4. Verify ────────────────────────────────────────────────────────────────
-step "4. Standards"
+step "4. Standards and generated tree"
 
 if dotnet run --project src/SecondKey.Standards.Generator -- validate >/dev/null 2>&1; then
   green "  Every rule in standards/ is valid."
@@ -80,11 +80,21 @@ else
   echo  "    dotnet run --project src/SecondKey.Standards.Generator -- validate"
 fi
 
+if dotnet run --project src/SecondKey.Standards.Generator -- generate --check >/dev/null 2>&1; then
+  green "  generated/ is up to date."
+else
+  amber "  generated/ is stale, or the version gate is unsatisfied. Run:"
+  echo  "    dotnet run --project src/SecondKey.Standards.Generator -- generate"
+  dim   "  See README \"Versioning\" if it asks for a version bump."
+fi
+
 # ── Summary ──────────────────────────────────────────────────────────────────
 step "Ready"
 
 echo "  dotnet test                                                     run the tests"
 echo "  dotnet run --project src/SecondKey.Standards.Generator -- validate   check the rules"
+echo "  dotnet run --project src/SecondKey.Standards.Generator -- generate   regenerate generated/"
+echo "  ./scripts/verify-package.sh                                     pack and verify the NuGet package"
 echo "  ./scripts/scan-secrets.sh                                       mirror the CI secret scan"
 
 if [ "${DEGRADED}" -eq 1 ]; then

@@ -33,4 +33,15 @@ internal static partial class Patterns
     /// </summary>
     [GeneratedRegex("^P([1-9]|1[0-5])[a-z]?$", RegexOptions.CultureInvariant)]
     public static partial Regex Principle();
+
+    /// <summary>
+    /// An Agent Skills name: lower-case letters and digits, single hyphens, no hyphen at either end
+    /// (the Agent Skills specification; GitHub Copilot uses it as the directory name).
+    /// </summary>
+    [GeneratedRegex("^[a-z0-9]+(-[a-z0-9]+)*$", RegexOptions.CultureInvariant)]
+    public static partial Regex SkillName();
+
+    /// <summary>A NuGet package id: dot- or hyphen-separated alphanumeric segments.</summary>
+    [GeneratedRegex("^[A-Za-z0-9_]+([.-][A-Za-z0-9_]+)*$", RegexOptions.CultureInvariant)]
+    public static partial Regex PackageId();
 }

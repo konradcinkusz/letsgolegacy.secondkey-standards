@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- A consumer that references packages, but not the standards. -->
+  <!-- A consumer project that does not pin the standards: no package reference, no skill. -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
 </Project>

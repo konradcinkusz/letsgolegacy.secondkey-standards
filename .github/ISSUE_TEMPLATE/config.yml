@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: The architecture constitution these standards restate
+    url: https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md
+    about: Principles P1–P15. A gap in a principle belongs there; a gap in a migration rule belongs here.

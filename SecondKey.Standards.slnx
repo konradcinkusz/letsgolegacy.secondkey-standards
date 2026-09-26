@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SecondKey.Standards.Generator/SecondKey.Standards.Generator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SecondKey.Standards.Generator.Tests/SecondKey.Standards.Generator.Tests.csproj" />
+  </Folder>
+</Solution>

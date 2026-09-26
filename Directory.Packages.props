@@ -1,0 +1,24 @@
+<Project>
+
+  <!--
+    Central package management (REPO-BASELINE.md §1): every package version in the repository
+    is pinned here, once. Projects reference packages without a version.
+
+    The dependency budget is published in README.md ("Dependencies"); a new line here is a
+    decision somebody can ask about in review.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup Label="Generator">
+    <PackageVersion Include="System.CommandLine" Version="2.0.12" />
+    <PackageVersion Include="YamlDotNet" Version="18.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Tests">
+    <PackageVersion Include="xunit.v3" Version="4.0.1" />
+  </ItemGroup>
+
+</Project>

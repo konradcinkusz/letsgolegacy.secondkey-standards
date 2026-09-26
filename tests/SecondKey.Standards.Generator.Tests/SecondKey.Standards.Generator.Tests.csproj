@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    xUnit v3 on Microsoft.Testing.Platform: global.json opts `dotnet test` into the new test
+    experience, which is what xUnit v3 needs on the .NET 10 SDK (the VSTest bridge is not supported
+    there). The test project is an executable, so it can also be run directly.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SecondKey.Standards.Generator\SecondKey.Standards.Generator.csproj" />
+  </ItemGroup>
+
+</Project>

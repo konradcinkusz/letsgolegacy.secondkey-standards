@@ -1,0 +1,22 @@
+# A real .gitattributes (REPO-BASELINE.md §1): normalise line endings on the way in and
+# check out LF everywhere. The generator compares files byte for byte in --check mode, so
+# a CRLF checkout on Windows would otherwise report every generated file as stale.
+* text=auto eol=lf
+
+*.cs      text eol=lf
+*.csproj  text eol=lf
+*.props   text eol=lf
+*.targets text eol=lf
+*.slnx    text eol=lf
+*.md      text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.sh      text eol=lf
+
+*.png     binary
+*.nupkg   binary
+
+# The standards are the point of this repository; GitHub should count them as such rather
+# than classifying the repository by its generator.
+standards/** linguist-documentation=true
+docs/**      linguist-documentation=true

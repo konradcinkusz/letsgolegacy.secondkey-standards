@@ -1,0 +1,24 @@
+# gitleaks configuration — letsgolegacy.secondkey-standards
+#
+# Runs in two places, deliberately (P5; REPO-BASELINE.md §2 in architecture-standards):
+#   • pre-commit hook (scripts/hooks/pre-commit) — catches the mistake before it becomes
+#     history;
+#   • CI job (.github/workflows/secret-scan.yml) — catches contributors without hooks.
+#
+# If a secret ever lands here: ROTATE FIRST, clean history second. This repository is
+# public; a pushed commit is disclosed the moment it is pushed.
+
+title = "letsgolegacy.secondkey-standards secret scanning"
+
+[extend]
+# The upstream provider rules. No bespoke rule is added, and the reason is written down
+# rather than left as an apparent omission: this repository holds no credential of its own.
+# It ships standards, a generator that reads only files in the tree, and a drift check that
+# reads public git tags. A credential could only arrive here by mistake, which is exactly
+# what the upstream rules are for. Whoever adds the first secret this repository legitimately
+# needs adds its detection rule in the same commit.
+useDefault = true
+
+# No allowlist. The standards discuss secrets (SK-ARCH-003) using placeholders such as
+# "<from the secret store>", never values; if a scanner update ever flags one of them, the
+# fix is to reword the example, not to allowlist a path.

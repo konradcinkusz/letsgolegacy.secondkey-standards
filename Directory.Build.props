@@ -1,0 +1,28 @@
+<Project>
+
+  <!--
+    Shared build settings for every project in the repository, so there is one place to change
+    the target framework, the nullable posture or the analysis level (REPO-BASELINE.md §1).
+
+    TreatWarningsAsErrors is on because this repository publishes rules about warnings: the
+    globalization analyzers it asks migrated code to satisfy (see .editorconfig) are errors
+    here, not suggestions.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Konrad Cinkusz</Authors>
+    <Copyright>Copyright (c) 2026 Konrad Cinkusz. All rights reserved.</Copyright>
+    <RepositoryUrl>https://github.com/konradcinkusz/letsgolegacy.secondkey-standards</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+</Project>

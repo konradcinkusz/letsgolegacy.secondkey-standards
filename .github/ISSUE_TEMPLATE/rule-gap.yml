@@ -1,0 +1,32 @@
+name: Gap in a migration standard
+description: A rule that is missing, wrong, or that the agent or the gate reads differently from what it says.
+labels: []
+body:
+  - type: input
+    id: rule
+    attributes:
+      label: Which rule
+      placeholder: SK-MIG-005, or "none — a missing rule"
+    validations: { required: true }
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of gap
+      options:
+        - Missing — a migration trap no rule covers
+        - Wrong — the rule contradicts documented .NET behaviour
+        - Drift — the agent was told one thing and the gate enforces another
+        - Unclear — the rule is stated but not decidable in practice
+    validations: { required: true }
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >
+        The code, the observed behaviour, or the documentation that shows it. A migration rule
+        changed without evidence is the failure these standards exist to prevent.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What the rule should say

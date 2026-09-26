@@ -1,0 +1,50 @@
+# REPO-BASELINE.md §1 (architecture-standards): formatting is settled by a file, not by
+# whichever IDE touched the code last.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+# Two trailing spaces are a Markdown line break, so trimming them would silently reflow
+# documents.
+[*.md]
+trim_trailing_whitespace = false
+max_line_length = 100
+
+[*.{cs,csx}]
+indent_size = 4
+
+[*.{csproj,props,targets,slnx,xml}]
+indent_size = 2
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.sh]
+indent_size = 2
+
+# ---------------------------------------------------------------------------------------
+# The generator eats its own cooking. This repository tells migration agents to make every
+# culture-sensitive string operation explicit (SK-MIG-005, SK-MIG-006); its own C# code is
+# held to the same rules, as build errors, because TreatWarningsAsErrors is on.
+[*.cs]
+dotnet_diagnostic.CA1304.severity = warning
+dotnet_diagnostic.CA1305.severity = warning
+dotnet_diagnostic.CA1307.severity = warning
+dotnet_diagnostic.CA1309.severity = warning
+dotnet_diagnostic.CA1310.severity = warning
+dotnet_diagnostic.CA1311.severity = warning
+
+# Sync-over-async has no analyzer in the SDK; CA1849 is the closest (a blocking call where
+# an awaitable one exists) and costs nothing in a codebase this size.
+dotnet_diagnostic.CA1849.severity = warning
+
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_prefer_braces = when_multiline:suggestion
+dotnet_style_qualification_for_field = false:suggestion

@@ -1,0 +1,31 @@
+{
+  "$comment": "Hand-authored pack metadata. The rules themselves live in standards/*.md; this file holds the closed vocabularies they are validated against. See standards/README.md and docs/adr/0001-standards-source-format.md.",
+  "name": "secondkey-standards",
+  "categories": [
+    "hosting",
+    "layering",
+    "concurrency",
+    "configuration",
+    "globalization",
+    "dependency-injection",
+    "outbound-http",
+    "data-access",
+    "behaviour",
+    "observability"
+  ],
+  "portcullisRules": [
+    "PORTCULLIS_MIG_SYSTEM_WEB",
+    "PORTCULLIS_MIG_HTTPCONTEXT_CURRENT",
+    "PORTCULLIS_MIG_SYNC_OVER_ASYNC",
+    "PORTCULLIS_MIG_CONFIGURATION_MANAGER",
+    "PORTCULLIS_P2_KERNEL_LOC_CEILING",
+    "PORTCULLIS_P2_KERNEL_ENTITY_REFERENCE",
+    "PORTCULLIS_P4_ENSURE_CREATED_OUTSIDE_TEST",
+    "PORTCULLIS_P4_SEED_DATA_IN_MODEL",
+    "PORTCULLIS_P9_CONTROLLER_NO_DBCONTEXT",
+    "PORTCULLIS_P9_ORPHAN_ENTITY",
+    "PORTCULLIS_P10_CUSTOM_BASE_CLASS",
+    "PORTCULLIS_P11_VENDOR_SDK_OUTSIDE_ADAPTER",
+    "PORTCULLIS_P15_MISSING_SERVICE_DEFAULTS"
+  ]
+}

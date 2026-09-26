@@ -1,0 +1,33 @@
+# Dependency update automation — REPO-BASELINE.md §1.
+#
+# Two ecosystems: the GitHub Actions the workflows pin, and the NuGet packages the generator
+# and its tests use (all versions live in Directory.Packages.props, so one file changes per
+# update). Updates are grouped per ecosystem so a week's bumps arrive as one reviewable PR.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(ci)(deps)'
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: 'chore(deps)'
+    groups:
+      nuget:
+        patterns: ['*']

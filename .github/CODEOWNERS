@@ -1,0 +1,12 @@
+# Every path is owned by the maintainer. In a single-maintainer repository this is a low
+# bar, but it is also the machine-readable answer to "who reviews this" (REPO-BASELINE.md §1),
+# which is worth committing before there is a second contributor rather than after.
+
+*                       @konradcinkusz
+
+# The standards and the pack metadata decide what every migration agent is told and what
+# every gate enforces, so an unreviewed change here reaches every consumer at once.
+/standards/             @konradcinkusz
+/catalog/               @konradcinkusz
+/src/                   @konradcinkusz
+/.github/workflows/     @konradcinkusz

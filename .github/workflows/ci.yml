@@ -107,6 +107,94 @@ jobs:
           path: ${{ runner.temp }}/packages/*.nupkg
           if-no-files-found: error
 
+  # The C4-c acceptance criterion: the drift-check step, run exactly as a consumer runs it
+  # (uses: ./actions/drift-check), fails for a fixture repository with a stale pin and passes for a
+  # current one. The release source is a git repository built from the commit under test and tagged
+  # with the pack's version, so the check reads real tags, a real changelog and a real manifest,
+  # offline. The three failing fixtures also leave error annotations on the run: they are expected.
+  drift-check:
+    name: Drift check on fixture consumers
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Publish a release source for this commit
+        id: source
+        run: |
+          set -euo pipefail
+          VERSION="$(jq -r .version catalog/pack.json)"
+          SOURCE="${RUNNER_TEMP}/standards-source.git"
+          git init --quiet --bare "${SOURCE}"
+          git push --quiet "${SOURCE}" HEAD:refs/heads/main
+          git -C "${SOURCE}" tag "v${VERSION}" main
+          echo "path=${SOURCE}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      # What a consumer does to upgrade: copy the skill, set the package version. Built from this
+      # commit, so it is current by construction and never needs editing when the version moves.
+      - name: Assemble a current consumer
+        env:
+          VERSION: ${{ steps.source.outputs.version }}
+        run: |
+          set -euo pipefail
+          CONSUMER="${RUNNER_TEMP}/consumer-current"
+          mkdir -p "${CONSUMER}/.github/skills"
+          cp -R generated/skills/applying-dotnet-migration-standards "${CONSUMER}/.github/skills/"
+          printf '<Project>\n  <ItemGroup>\n    <GlobalPackageReference Include="SecondKey.Standards" Version="%s" />\n  </ItemGroup>\n</Project>\n' \
+            "${VERSION}" > "${CONSUMER}/Directory.Packages.props"
+
+      - name: 'Current pin: the step passes'
+        id: current
+        uses: ./actions/drift-check
+        with:
+          working-directory: ${{ runner.temp }}/consumer-current
+          source: ${{ steps.source.outputs.path }}
+
+      - name: 'Stale pin: the step fails (expected)'
+        id: stale
+        continue-on-error: true
+        uses: ./actions/drift-check
+        with:
+          working-directory: tests/fixtures/drift/stale
+          source: ${{ steps.source.outputs.path }}
+
+      - name: 'Disagreeing pins: the step fails (expected)'
+        id: disagreeing
+        continue-on-error: true
+        uses: ./actions/drift-check
+        with:
+          working-directory: tests/fixtures/drift/disagreeing
+          source: ${{ steps.source.outputs.path }}
+
+      - name: 'Unpinned: the step fails (expected)'
+        id: unpinned
+        continue-on-error: true
+        uses: ./actions/drift-check
+        with:
+          working-directory: tests/fixtures/drift/unpinned
+          source: ${{ steps.source.outputs.path }}
+
+      - name: Each fixture got the expected outcome
+        env:
+          CURRENT: ${{ steps.current.outcome }}/${{ steps.current.outputs.status }}
+          STALE: ${{ steps.stale.outcome }}/${{ steps.stale.outputs.status }}
+          DISAGREEING: ${{ steps.disagreeing.outcome }}/${{ steps.disagreeing.outputs.status }}
+          UNPINNED: ${{ steps.unpinned.outcome }}/${{ steps.unpinned.outputs.status }}
+        run: |
+          FAILED=0
+          expect() {
+            if [ "$2" = "$3" ]; then echo "$1: $2"; else echo "::error::$1 fixture: expected $3, got $2"; FAILED=1; fi
+          }
+          expect current "${CURRENT}" "success/current"
+          expect stale "${STALE}" "failure/behind"
+          expect disagreeing "${DISAGREEING}" "failure/disagree"
+          expect unpinned "${UNPINNED}" "failure/unpinned"
+          exit "${FAILED}"
+
   release-guard:
     name: Release guard
     if: startsWith(github.ref, 'refs/tags/v')

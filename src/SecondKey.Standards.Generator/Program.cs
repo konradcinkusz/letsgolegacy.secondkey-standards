@@ -1,3 +1,3 @@
 using SecondKey.Standards.Generator.Cli;
 
-return CommandLineApp.Run(args, CliContext.FromProcess());
+return await CommandLineApp.RunAsync(args, CliContext.FromProcess());

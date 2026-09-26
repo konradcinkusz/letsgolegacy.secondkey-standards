@@ -1,0 +1,111 @@
+name: Second Key standards drift check
+description: >-
+  Fails when this repository's pinned Second Key standards version is behind the latest release,
+  printing the rules and changelog entries it is missing, or when its skill and its analyzer
+  configuration package pin different versions.
+author: konradcinkusz
+
+# One CI step for a consuming repository:
+#
+#   - uses: konradcinkusz/letsgolegacy.secondkey-standards/actions/drift-check@main
+#
+# The pin is read where the consumer already states it — the SecondKey.Standards package reference
+# and the installed skill's metadata.version — and compared with the highest v<MAJOR.MINOR.PATCH>
+# tag of the standards repository. No service, no lock file: a NuGet package, a git tag and this
+# step. The logic is the secondkey-standards tool's drift-check command, built from this action's
+# own checkout, so the action and the command cannot disagree.
+
+inputs:
+  working-directory:
+    description: The consuming repository to check, relative to the workspace (or absolute).
+    required: false
+    default: '.'
+  source:
+    description: Where releases are read from — the standards repository's git URL, or a local path to a clone or mirror.
+    required: false
+    default: 'https://github.com/konradcinkusz/letsgolegacy.secondkey-standards'
+  package-id:
+    description: The NuGet package that carries the gate configuration.
+    required: false
+    default: 'SecondKey.Standards'
+  skill-name:
+    description: The installed skill's directory name under .github/skills/ (or .github/upgrades/skills/, .claude/skills/, .agents/skills/).
+    required: false
+    default: 'applying-dotnet-migration-standards'
+  pinned-version:
+    description: Check this version instead of reading the repository's package reference and skill.
+    required: false
+    default: ''
+  latest-version:
+    description: Treat this as the latest release instead of listing the source's tags (for an offline or mirrored setup).
+    required: false
+    default: ''
+
+outputs:
+  status:
+    description: current, behind, ahead, disagree, unpinned, unreadable, no-release or source-unavailable.
+    value: ${{ steps.check.outputs.status }}
+  pinned-version:
+    description: The version the repository pins.
+    value: ${{ steps.check.outputs.pinned-version }}
+  latest-version:
+    description: The latest released version.
+    value: ${{ steps.check.outputs.latest-version }}
+
+runs:
+  using: composite
+  steps:
+    # The tool needs a .NET 10 SDK. Install one only when the runner has none, so a consumer's own
+    # SDK setup is left alone.
+    - name: Find a .NET 10 SDK
+      id: sdk
+      shell: bash
+      run: |
+        if command -v dotnet >/dev/null 2>&1 && dotnet --list-sdks 2>/dev/null | grep -q '^10\.'; then
+          echo "found=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "found=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Install the .NET 10 SDK
+      if: steps.sdk.outputs.found != 'true'
+      uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: '10.0.x'
+
+    # Runs from the action's own checkout, so this repository's global.json picks the SDK rather
+    # than the consumer's. Inputs reach the script through the environment, never through
+    # expression interpolation into the script text.
+    - name: Check the pinned standards version
+      id: check
+      shell: bash
+      working-directory: ${{ github.action_path }}/../..
+      env:
+        DOTNET_NOLOGO: 'true'
+        DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+        INPUT_WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        INPUT_SOURCE: ${{ inputs.source }}
+        INPUT_PACKAGE_ID: ${{ inputs.package-id }}
+        INPUT_SKILL_NAME: ${{ inputs.skill-name }}
+        INPUT_PINNED_VERSION: ${{ inputs.pinned-version }}
+        INPUT_LATEST_VERSION: ${{ inputs.latest-version }}
+      run: |
+        set -euo pipefail
+
+        case "${INPUT_WORKING_DIRECTORY}" in
+          /*) REPOSITORY="${INPUT_WORKING_DIRECTORY}" ;;
+          *)  REPOSITORY="${GITHUB_WORKSPACE}/${INPUT_WORKING_DIRECTORY}" ;;
+        esac
+
+        SOURCE="${INPUT_SOURCE}"
+        case "${SOURCE}" in
+          *://*|*@*:*|/*) ;;
+          *) SOURCE="${GITHUB_WORKSPACE}/${SOURCE}" ;;   # a relative local path is relative to the workspace
+        esac
+
+        ARGS=(drift-check --repo "${REPOSITORY}" --source "${SOURCE}" --package-id "${INPUT_PACKAGE_ID}" --skill-name "${INPUT_SKILL_NAME}")
+        if [ -n "${INPUT_PINNED_VERSION}" ]; then ARGS+=(--pinned-version "${INPUT_PINNED_VERSION}"); fi
+        if [ -n "${INPUT_LATEST_VERSION}" ]; then ARGS+=(--latest-version "${INPUT_LATEST_VERSION}"); fi
+
+        dotnet run --project src/SecondKey.Standards.Generator --configuration Release -- "${ARGS[@]}"

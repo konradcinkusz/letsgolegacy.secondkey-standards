@@ -22,3 +22,7 @@ What each kind of version bump means is in the README ("Versioning").
 - The skill's instructions for GitHub Copilot's modernization agent: the legacy baseline to record
   before the first task, the rules during each task, the gate and the tests after each, the flag
   format, success criteria and error handling.
+- The drift check for consuming repositories: `secondkey-standards drift-check` and the
+  `actions/drift-check` composite action, which fail when the pinned version is behind the latest
+  release (printing the rules and changelog entries it is missing) or when the skill and the package
+  pin different versions.

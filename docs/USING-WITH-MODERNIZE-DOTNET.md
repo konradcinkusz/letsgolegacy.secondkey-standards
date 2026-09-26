@@ -20,8 +20,9 @@ the standards skill), and it works the same way for any .NET Framework repositor
 5. [Run the upgrade so it uses the skill](#5-run-the-upgrade-so-it-uses-the-skill)
 6. [Confirm the agent picked the skill up](#6-confirm-the-agent-picked-the-skill-up)
 7. [Add the gate configuration to the migrated solution](#7-add-the-gate-configuration-to-the-migrated-solution)
-8. [Troubleshooting](#8-troubleshooting)
-9. [What is verified and what is not](#9-what-is-verified-and-what-is-not)
+8. [Keep the pin current](#8-keep-the-pin-current)
+9. [Troubleshooting](#9-troubleshooting)
+10. [What is verified and what is not](#10-what-is-verified-and-what-is-not)
 
 ## 1. What the agent reads
 
@@ -37,7 +38,7 @@ description: "Applies the Second Key migration standards while a .NET Framework 
 metadata:
   discovery: "preload"      # GitHub Copilot upgrade: always available, not only on a description match
   traits: ".NET|CSharp"     # GitHub Copilot upgrade: the technologies it applies to
-  version: "0.1.0"          # the standards version this copy came from
+  version: "0.1.0"          # the standards version this copy came from (the drift check reads it)
   source: "https://github.com/konradcinkusz/letsgolegacy.secondkey-standards"
 ```
 
@@ -106,7 +107,7 @@ newer version from this repository instead.
 
 ## 4. Install the agent
 
-Use one of these. The steps are Microsoft's; see section 9 for the sources.
+Use one of these. The steps are Microsoft's; see section 10 for the sources.
 
 **Visual Studio (Windows)** — Visual Studio 2026, or Visual Studio 2022 17.14.17 or later. In the
 Visual Studio Installer, in the **.NET desktop development** workload, enable the optional components
@@ -226,7 +227,21 @@ mkdir -p .packages && cp /path/to/SecondKey.Standards.0.1.0.nupkg .packages/
 
 Use the same version as the skill: the agent and the gate must be told the same standards.
 
-## 8. Troubleshooting
+## 8. Keep the pin current
+
+The skill copy and the package reference are the target repository's pin: both carry the standards
+version. Add one step to its CI, and it fails when a newer release exists (printing the rules and
+changelog entries it is missing) or when the skill and the package disagree:
+
+```yaml
+- uses: konradcinkusz/letsgolegacy.secondkey-standards/actions/drift-check@main
+```
+
+To update, take the newer tag, copy the skill again (section 3) and set the package version to match
+(section 7). Until the first release of the standards is tagged, the step reports "no release" and
+fails — there is nothing to pin yet; for P6 before a release, leave it out.
+
+## 9. Troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -236,7 +251,7 @@ Use the same version as the skill: the agent and the gate must be told the same 
 | The agent enables `InvariantGlobalization` or edits a test's expected value | It followed a generic fix instead of the rule | Point it at the rule: `This violates SK-MIG-007 (or SK-MIG-013). Revert it and record a behaviour flag instead.`, and add the rule to the permanent instruction |
 | The build fails with a `PORTCULLIS_` or `CA` error | The gate configuration is installed (section 7) and code violates an error-severity rule | Fix it the rule's way, or suppress the line with a `SECONDKEY-FLAG` justification, as the skill describes |
 
-## 9. What is verified and what is not
+## 10. What is verified and what is not
 
 Verified against Microsoft's and GitHub's current documentation (read on 2026-09-26):
 

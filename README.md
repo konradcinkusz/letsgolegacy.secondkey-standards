@@ -5,9 +5,8 @@ architectural and migration standards written once, delivered to the migration a
 to the gate as analyzer configuration, from the same source.
 
 > **Status:** phase 01 under construction; see [`docs/WORKPLAN.md`](docs/WORKPLAN.md). The standards,
-> their validator, the generator and the skill for GitHub Copilot's modernization agent are in place;
-> the consumer drift check arrives in a following work item. No version has been released (tagged)
-> yet.
+> their validator, the generator, the skill for GitHub Copilot's modernization agent and the consumer
+> drift check are in place. No version has been released (tagged) yet.
 
 ## What is here
 
@@ -17,8 +16,9 @@ to the gate as analyzer configuration, from the same source.
 | [`catalog/pack.json`](catalog/pack.json) | The pack's version, the skill's and the package's names, and the closed vocabularies the rules are validated against |
 | [`catalog/skill.template.md`](catalog/skill.template.md) | The hand-written body of the agent skill; the generator fills in the rule and gate tables |
 | [`generated/`](generated/) | **Generated — never edit by hand.** The agent skill, the analyzer configuration, the NuGet package project and the manifest |
-| [`src/SecondKey.Standards.Generator`](src/SecondKey.Standards.Generator) | The `secondkey-standards` tool (.NET 10): validates the rules and generates `generated/` |
-| [`tests/`](tests/) | Its tests, including the checks that hold this repository's own rules and generated tree to their contract |
+| [`src/SecondKey.Standards.Generator`](src/SecondKey.Standards.Generator) | The `secondkey-standards` tool (.NET 10): validates the rules, generates `generated/`, and checks a consumer for drift |
+| [`actions/drift-check/`](actions/drift-check/action.yml) | The drift check as one CI step for a consuming repository |
+| [`tests/`](tests/) | The tool's tests, including the checks that hold this repository's own rules and generated tree to their contract, and the drift-check fixture consumers |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed in each version |
 | [`docs/USING-WITH-MODERNIZE-DOTNET.md`](docs/USING-WITH-MODERNIZE-DOTNET.md) | How to install the skill into a target repository and run GitHub Copilot's modernization agent with it |
 | [`docs/adr/`](docs/adr/) | Decisions and the reasons for them |
@@ -97,6 +97,40 @@ The `SecondKey.Standards` package is packed by CI and attached to each run as th
 Any severity can be overridden in the consuming repository's `.editorconfig`, which always wins, and
 `<SecondKeyStandardsGlobalConfig>false</SecondKeyStandardsGlobalConfig>` switches the package off in a
 project. Without the package, copy `generated/config/.globalconfig` to the repository root.
+
+## Checking a consuming repository for drift
+
+A consuming repository pins a standards version in the two places it already states one: the
+`SecondKey.Standards` package reference (the gate's configuration) and the installed skill's
+`metadata.version` (the agent's instructions). One CI step compares the pin with the latest release —
+the highest `v<MAJOR.MINOR.PATCH>` tag of this repository — and fails when the repository is behind,
+printing the rules that changed and the changelog entries it is missing. It also fails when the skill
+and the package pin different versions: then the agent and the gate are working from different
+standards.
+
+```yaml
+# .github/workflows/standards.yml in the consuming repository
+name: Standards drift
+on: [pull_request, push]
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: konradcinkusz/letsgolegacy.secondkey-standards/actions/drift-check@main
+```
+
+Inputs: `working-directory`, `source` (a git URL or local mirror), `package-id`, `skill-name`,
+`pinned-version`, `latest-version`; outputs: `status`, `pinned-version`, `latest-version`
+([`action.yml`](actions/drift-check/action.yml)). The same check without the action:
+
+```sh
+dotnet run --project src/SecondKey.Standards.Generator -- drift-check --repo /path/to/consumer
+```
+
+It exits 0 when current, 1 when behind, ahead of every release, disagreeing or unpinned, and 2 when it
+cannot check (an unreadable pin, no release yet, an unreachable source). Until the first release is
+tagged, it reports "no release". Design and alternatives: [ADR 0005](docs/adr/0005-drift-check.md).
 
 ## Dependencies
 

@@ -10,3 +10,4 @@ one that lists commands).
 | [0002](0002-generator-as-a-dotnet-tool.md) | The generator is a .NET 10 tool, and it validates the standards from the first pull request |
 | [0003](0003-generated-tree-and-versioning.md) | The generated tree, `generate --check`, the version gate, and the configuration-only NuGet package |
 | [0004](0004-skill-for-github-copilot-upgrade.md) | The standards as a custom skill for GitHub Copilot's modernization agent (modernize-dotnet): format, location, name, discovery |
+| [0005](0005-drift-check.md) | The drift check: the pin read from the package reference and the skill, releases from git tags, one CI step, no service |

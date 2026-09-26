@@ -18,10 +18,10 @@ Ticket IDs match the cross-repository backlog.
 
 | ID | Deliverable | Done when | Status |
 |---|---|---|---|
-| R4 | architecture-standards packaged as a custom skill for Microsoft's modernization agent (modernize-dotnet) | The agent picks it up in bench ticket P6 (P6 is run by a person with GitHub Copilot) | planned |
-| C4-a | Migration standards written as Markdown with rule metadata (ids mapped to Portcullis diagnostics) | Every rule has an id, a severity, a rationale, a compliant and a non-compliant example | planned |
-| C4-b | Generator: Markdown → skills directory + `.editorconfig` / `.globalconfig` + NuGet package | `--check` mode in CI fails when generated output is stale | planned |
-| C4-c | Drift check as one CI step for a consuming repository (pinned version vs published version) | A fixture repository with a stale pin fails the step, a current one passes | planned |
+| R4 | architecture-standards packaged as a custom skill for Microsoft's modernization agent (modernize-dotnet) | The agent picks it up in bench ticket P6 (P6 is run by a person with GitHub Copilot) | in review (#3) |
+| C4-a | Migration standards written as Markdown with rule metadata (ids mapped to Portcullis diagnostics) | Every rule has an id, a severity, a rationale, a compliant and a non-compliant example | in review (#1) |
+| C4-b | Generator: Markdown → skills directory + `.editorconfig` / `.globalconfig` + NuGet package | `--check` mode in CI fails when generated output is stale | in review (#2) |
+| C4-c | Drift check as one CI step for a consuming repository (pinned version vs published version) | A fixture repository with a stale pin fails the step, a current one passes | in review (#4) |
 
 ## Phase 02 and later
 

@@ -58,6 +58,11 @@ The statement: what migrated code must or must not do, in a paragraph or two.
 
 A diagnostic may be mapped by one rule only: two rules would give it two severities.
 
+`portcullisRules` in `catalog/pack.json` lists every principle and migration rule the gate ships,
+whether or not a standard maps it: it is the vocabulary a rule may choose from. A listed diagnostic
+that no rule maps is left out of the generated configuration, so Portcullis's own default severity
+applies to it.
+
 ### Severity
 
 One vocabulary for the agent and the gate. The names are the `.editorconfig` severities the

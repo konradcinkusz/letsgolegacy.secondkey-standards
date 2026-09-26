@@ -2,6 +2,9 @@
 
 - **Status:** accepted (R4); pickup in a real run to be confirmed by bench ticket P6
 - **Date:** 2026-09-26
+- **Amended:** 2026-09-26 — decision 8 said reference files over 100 lines open with a `Contents:`
+  line. The generator gives every reference file one, and that is the intended behaviour; decision 8
+  now says so.
 
 ## Context
 
@@ -65,8 +68,10 @@ The mechanism was checked against the current sources rather than assumed:
 
 8. **The description is one double-quoted line, with a "Use when…" clause.** YAML parsers read a
    folded block just as well, but line-based checks in skill tooling see only the first line of a
-   block scalar. Reference files over 100 lines open with a `Contents:` line, as Microsoft's authoring
-   rules ask.
+   block scalar. Every reference file opens with a `Contents:` line listing its sections, which
+   meets Microsoft's authoring rule that reference files over 100 lines have a table of contents.
+   The line is emitted for every file, not only the long ones, so it does not appear and disappear
+   as a rule's length crosses the threshold.
 
 9. **Checked once against Microsoft's own skill validator, not in CI.** The `validate_skill.sh` script
    in `microsoft/upgrade-agent-plugins` reports 0 failures and two warnings, both heuristics that do

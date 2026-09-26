@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | hosting | `*.cs` | `PORTCULLIS_MIG_SYSTEM_WEB` | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Migrated code does not depend on the ASP.NET Framework hosting model: no reference to the
 `System.Web` assembly and no use of the `System.Web.*` types that exist to run inside IIS's

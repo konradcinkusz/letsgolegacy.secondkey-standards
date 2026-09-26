@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | data-access | `*.cs` | `PORTCULLIS_P4_ENSURE_CREATED_OUTSIDE_TEST` | [P4](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p4) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 The database the legacy system runs on is part of the contract. The migrated system never calls
 `Database.EnsureCreated()` outside tests, and never lets a model convention alter the schema: the

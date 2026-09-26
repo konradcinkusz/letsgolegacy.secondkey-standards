@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | globalization | `*.csproj`, `*.props`, `*.json`, `Dockerfile` | — | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 The migrated system runs with ICU, the modern .NET default, and the migration does not change that
 behind anyone's back. It does not set `InvariantGlobalization`, `System.Globalization.UseNls` or

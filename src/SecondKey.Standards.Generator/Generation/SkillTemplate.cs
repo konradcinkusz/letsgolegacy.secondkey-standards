@@ -21,6 +21,15 @@ internal static partial class SkillTemplate
         "repository",
     ];
 
+    /// <summary>
+    /// Tokens the template must use: without the rule table and the gate table, the skill would not
+    /// tell the agent what the rules are or what the gate checks.
+    /// </summary>
+    public static IReadOnlyList<string> RequiredPlaceholders { get; } = ["rule-table", "gate-table"];
+
+    public static IReadOnlyList<string> MissingPlaceholders(string template) =>
+        RequiredPlaceholders.Where(name => !template.Contains("{{" + name + "}}", StringComparison.Ordinal)).ToList();
+
     /// <summary>Tokens in <paramref name="template"/> the generator does not know.</summary>
     public static IReadOnlyList<(int Line, string Token)> UnknownPlaceholders(string template)
     {

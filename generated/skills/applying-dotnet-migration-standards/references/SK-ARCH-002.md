@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | warning | data-access | `*.cs` | `PORTCULLIS_P4_SEED_DATA_IN_MODEL` | [P4](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p4) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Reference data that EF6 seeded — in an initializer's `Seed` method or a migrations configuration's
 `Seed` override — moves to a versioned seeding script or an idempotent seeding service that runs

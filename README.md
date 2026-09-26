@@ -5,8 +5,9 @@ architectural and migration standards written once, delivered to the migration a
 to the gate as analyzer configuration, from the same source.
 
 > **Status:** phase 01 under construction; see [`docs/WORKPLAN.md`](docs/WORKPLAN.md). The standards,
-> their validator and the generator are in place; the consumer drift check arrives in a following
-> work item. No version has been released (tagged) yet.
+> their validator, the generator and the skill for GitHub Copilot's modernization agent are in place;
+> the consumer drift check arrives in a following work item. No version has been released (tagged)
+> yet.
 
 ## What is here
 
@@ -19,6 +20,7 @@ to the gate as analyzer configuration, from the same source.
 | [`src/SecondKey.Standards.Generator`](src/SecondKey.Standards.Generator) | The `secondkey-standards` tool (.NET 10): validates the rules and generates `generated/` |
 | [`tests/`](tests/) | Its tests, including the checks that hold this repository's own rules and generated tree to their contract |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed in each version |
+| [`docs/USING-WITH-MODERNIZE-DOTNET.md`](docs/USING-WITH-MODERNIZE-DOTNET.md) | How to install the skill into a target repository and run GitHub Copilot's modernization agent with it |
 | [`docs/adr/`](docs/adr/) | Decisions and the reasons for them |
 
 ## The standards
@@ -39,7 +41,7 @@ five Portcullis architecture rules, and the .NET SDK's globalization analyzers.
 
 | Output | For | Path |
 |---|---|---|
-| Agent skill | The migration agent: `SKILL.md` plus one reference file per rule, copyable into a repository's `.github/skills/` | `generated/skills/applying-dotnet-migration-standards/` |
+| Agent skill | The migration agent: `SKILL.md` plus one reference file per rule, copyable into a repository's `.github/skills/` ([how](docs/USING-WITH-MODERNIZE-DOTNET.md)) | `generated/skills/applying-dotnet-migration-standards/` |
 | `.editorconfig` | The gate: `dotnet_diagnostic.<id>.severity` for every mapped rule, scoped to the files the rule applies to | `generated/config/.editorconfig` |
 | `.globalconfig` | The gate: the same severities as a global analyzer config | `generated/config/.globalconfig` |
 | NuGet package | A build: `SecondKey.Standards` loads the `.globalconfig` through `build/` props, so one package reference applies every severity | `generated/nuget/` |

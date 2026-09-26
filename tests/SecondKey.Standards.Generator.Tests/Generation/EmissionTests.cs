@@ -153,15 +153,27 @@ public class EmissionTests
     {
         using var repository = new TestRepository();
         repository.WriteRule("SK-MIG-001.md", RuleText.Valid());
-        repository.WriteFile("catalog/skill.template.md", "# Skill\n\n{{rule-tabel}}\n");
+        repository.WriteFile("catalog/skill.template.md", "# Skill\n\n{{rule-table}}\n\n{{gate-table}}\n\n{{rule-tabel}}\n");
 
         var result = PackGenerator.Build(repository.Layout, PackConfig.Load(repository.Layout.PackConfigPath));
 
         Assert.False(result.Succeeded);
         var problem = Assert.Single(result.Problems);
         Assert.Equal("catalog/skill.template.md", problem.Path);
-        Assert.Equal(3, problem.Line);
+        Assert.Equal(7, problem.Line);
         Assert.Contains("{{rule-tabel}}", problem.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void A_template_without_the_gate_table_is_a_problem()
+    {
+        using var repository = new TestRepository();
+        repository.WriteRule("SK-MIG-001.md", RuleText.Valid());
+        repository.WriteFile("catalog/skill.template.md", "# Skill\n\n{{rule-table}}\n");
+
+        var result = PackGenerator.Build(repository.Layout, PackConfig.Load(repository.Layout.PackConfigPath));
+
+        Assert.Contains(result.Problems, p => p.Message.Contains("must include {{gate-table}}", StringComparison.Ordinal));
     }
 
     [Fact]

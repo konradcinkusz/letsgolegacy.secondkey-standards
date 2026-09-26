@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | warning | globalization | `*.cs` | `CA1310` | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Every string comparison, search and sort whose default is culture-sensitive states its intent:
 `StringComparison.Ordinal` or `OrdinalIgnoreCase` for machine text — identifiers, keys, codes,

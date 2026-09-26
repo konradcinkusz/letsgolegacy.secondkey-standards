@@ -19,3 +19,6 @@ What each kind of version bump means is in the README ("Versioning").
   `SK-ARCH-007`): P4, P5, P9, P10 and P15.
 - The generated outputs: the `applying-dotnet-migration-standards` agent skill, `.editorconfig` and
   `.globalconfig` severities for eleven mapped rules, and the `SecondKey.Standards` NuGet package.
+- The skill's instructions for GitHub Copilot's modernization agent: the legacy baseline to record
+  before the first task, the rules during each task, the gate and the tests after each, the flag
+  format, success criteria and error handling.

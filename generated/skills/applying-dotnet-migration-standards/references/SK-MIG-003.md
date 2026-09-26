@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | concurrency | `*.cs` | `PORTCULLIS_MIG_SYNC_OVER_ASYNC` | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 No code blocks on asynchronous work with `.Result`, `.Wait()`, `.GetAwaiter().GetResult()`,
 `Task.WaitAll` or `Task.WaitAny`. A method that calls an asynchronous API is itself asynchronous,

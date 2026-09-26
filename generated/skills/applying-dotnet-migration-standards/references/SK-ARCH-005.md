@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | warning | layering | `*.cs` | `PORTCULLIS_P9_CONTROLLER_NO_DBCONTEXT` | [P9](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p9) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Controllers stay transport: they bind, authorize and delegate. The migration does not introduce a
 `DbContext` into a controller that did not use one. Where a legacy controller already used the data

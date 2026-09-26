@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | hosting | `*.cs` | `PORTCULLIS_MIG_HTTPCONTEXT_CURRENT` | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 No code reads the ambient `HttpContext.Current`. Controllers and endpoints use the `HttpContext`
 they are given; services receive the values they need — a user id, a store host, a culture — as

@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | suggestion | dependency-injection | `*.cs` | `PORTCULLIS_P10_CUSTOM_BASE_CLASS` | [P10](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p10) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Shared behaviour the migration needs to add — plumbing every controller used to get from the
 framework, a hook several services call — is an interface or a filter registered in DI, not a new

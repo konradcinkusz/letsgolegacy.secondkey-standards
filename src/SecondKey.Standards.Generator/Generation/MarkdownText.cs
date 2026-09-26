@@ -22,38 +22,6 @@ internal static class MarkdownText
         return builder.ToString().TrimEnd('\n');
     }
 
-    /// <summary>
-    /// A YAML folded block scalar (<c>key: &gt;-</c>), wrapped at about 76 columns: readable in a
-    /// diff, and free of the quoting rules a plain scalar would impose on the text.
-    /// </summary>
-    public static string YamlFolded(string key, string value)
-    {
-        var lines = new List<string>();
-        var line = new StringBuilder();
-        foreach (var word in value.Split(' ', StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (line.Length > 0 && line.Length + 1 + word.Length > 76)
-            {
-                lines.Add(line.ToString());
-                line.Clear();
-            }
-
-            if (line.Length > 0)
-            {
-                line.Append(' ');
-            }
-
-            line.Append(word);
-        }
-
-        if (line.Length > 0)
-        {
-            lines.Add(line.ToString());
-        }
-
-        return $"{key}: >-\n" + string.Join('\n', lines.Select(l => "  " + l));
-    }
-
     /// <summary>A YAML double-quoted scalar.</summary>
     public static string YamlQuoted(string value) =>
         "\"" + value.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal) + "\"";

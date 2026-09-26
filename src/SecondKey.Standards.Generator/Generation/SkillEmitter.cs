@@ -46,7 +46,10 @@ internal static class SkillEmitter
         var builder = new StringBuilder();
         builder.Append("---\n");
         builder.Append("name: ").Append(pack.Skill.Name).Append('\n');
-        builder.Append(MarkdownText.YamlFolded("description", pack.Skill.Description)).Append('\n');
+        // One double-quoted line rather than a folded block: YAML parsers read both, but the
+        // line-based checks some skill tooling runs (Microsoft's own skill validator among them)
+        // only see the first line of a block scalar.
+        builder.Append("description: ").Append(MarkdownText.YamlQuoted(pack.Skill.Description)).Append('\n');
         builder.Append("metadata:\n");
         builder.Append("  discovery: ").Append(MarkdownText.YamlQuoted(pack.Skill.Discovery)).Append('\n');
         builder.Append("  traits: ").Append(MarkdownText.YamlQuoted(pack.Skill.Traits)).Append('\n');
@@ -99,7 +102,7 @@ internal static class SkillEmitter
                     principle,
                 ],
             ])).Append("\n\n");
-        builder.Append("Sections: ")
+        builder.Append("Contents: ")
             .AppendJoin(" · ", rule.Sections.Select(section => section.Heading))
             .Append("\n\n");
         builder.Append(rule.Body).Append("\n\n");

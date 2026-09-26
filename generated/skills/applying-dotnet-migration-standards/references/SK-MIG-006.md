@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | warning | globalization | `*.cs` | `CA1304`, `CA1305`, `CA1311` | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Formatting and parsing of numbers, dates and currency, and upper- and lower-casing, name the
 culture they use: `CultureInfo.InvariantCulture` for values stored, exchanged or compared by

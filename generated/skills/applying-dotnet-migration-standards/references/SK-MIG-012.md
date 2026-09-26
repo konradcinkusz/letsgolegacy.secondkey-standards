@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | behaviour | `*.cs`, `*.cshtml` | — | — |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Every request the legacy system answered is answered the same way after the migration: the same
 URL and HTTP method reach the same action, and the response carries the same status code, redirect

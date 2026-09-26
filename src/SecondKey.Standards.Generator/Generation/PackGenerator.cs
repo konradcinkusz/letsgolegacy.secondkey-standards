@@ -35,6 +35,12 @@ public static class PackGenerator
                 problems.Add(new Problem(SkillTemplate.RelativePath, line,
                     $"unknown placeholder {{{{{token}}}}}; known placeholders are {string.Join(", ", SkillTemplate.Placeholders.Select(p => "{{" + p + "}}"))}"));
             }
+
+            foreach (var missing in SkillTemplate.MissingPlaceholders(template))
+            {
+                problems.Add(new Problem(SkillTemplate.RelativePath, null,
+                    $"the skill template must include {{{{{missing}}}}}"));
+            }
         }
 
         Changelog? changelog = null;

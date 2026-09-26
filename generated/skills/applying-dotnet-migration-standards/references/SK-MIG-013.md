@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | behaviour | `*.cs` | — | [P13](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p13) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing
 
 Existing tests migrate with the code and keep their assertions. A test may change only to follow an
 API move — a namespace, a test host, an `async` signature — never in its expected values, its

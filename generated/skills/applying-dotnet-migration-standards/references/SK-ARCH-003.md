@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | configuration | `*.json`, `*.config`, `*.cs` | — | [P5](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p5) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 No credential moves from `web.config` — a connection-string password, an API key, an SMTP password,
 a machine key — into a committed file: `appsettings.json`, `appsettings.<Environment>.json`,

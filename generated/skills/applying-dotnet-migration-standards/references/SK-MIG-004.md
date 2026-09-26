@@ -4,7 +4,7 @@
 |---|---|---|---|---|
 | error | configuration | `*.cs` | `PORTCULLIS_MIG_CONFIGURATION_MANAGER` | [P5](https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md#p5) |
 
-Sections: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
+Contents: Rationale · Non-compliant · Compliant · Migration · Flag instead of fixing · References
 
 Settings are bound to options classes (`IOptions<T>`) from `IConfiguration`, which reads
 `appsettings.json`, environment variables and the platform's secret store. No code reads

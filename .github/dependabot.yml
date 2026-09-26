@@ -31,3 +31,7 @@ updates:
     groups:
       nuget:
         patterns: ['*']
+    ignore:
+      # The package this repository produces. It appears only in the drift-check fixtures, pinned
+      # below every release on purpose, and is not published to a feed Dependabot can read.
+      - dependency-name: 'SecondKey.Standards'

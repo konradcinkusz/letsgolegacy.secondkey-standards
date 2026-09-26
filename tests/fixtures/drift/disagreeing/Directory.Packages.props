@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- The gate's configuration at one version... -->
+    <GlobalPackageReference Include="SecondKey.Standards" Version="0.0.2" />
+  </ItemGroup>
+</Project>

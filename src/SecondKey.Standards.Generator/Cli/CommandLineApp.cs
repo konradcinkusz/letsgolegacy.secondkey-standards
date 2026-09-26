@@ -1,4 +1,5 @@
 using System.CommandLine;
+using SecondKey.Standards.Generator.Drift;
 using SecondKey.Standards.Generator.Model;
 
 namespace SecondKey.Standards.Generator.Cli;
@@ -6,7 +7,7 @@ namespace SecondKey.Standards.Generator.Cli;
 /// <summary>The command-line surface. Each command is a thin adapter over a class the tests call directly.</summary>
 public static class CommandLineApp
 {
-    public static int Run(string[] args, CliContext context)
+    public static async Task<int> RunAsync(string[] args, CliContext context)
     {
         var rootOption = new Option<DirectoryInfo?>("--root")
         {
@@ -38,10 +39,14 @@ public static class CommandLineApp
         };
         generate.SetAction(parseResult => Generate(context, parseResult.GetValue(rootOption), parseResult.GetValue(checkOption)));
 
-        var root = new RootCommand("Second Key standards: validate the rules and compile them for the agent and the gate.")
+        var driftCheck = DriftCheckCommand(context);
+
+        var root = new RootCommand("Second Key standards: validate the rules, compile them for the agent and the gate, "
+            + "and check a consuming repository's pinned version.")
         {
             validate,
             generate,
+            driftCheck,
         };
 
         var result = root.Parse(args);
@@ -49,14 +54,120 @@ public static class CommandLineApp
         {
             foreach (var error in result.Errors)
             {
-                context.Error.WriteLine($"error: {error.Message}");
+                await context.Error.WriteLineAsync($"error: {error.Message}");
             }
 
-            context.Error.WriteLine("Run with --help for usage.");
+            await context.Error.WriteLineAsync("Run with --help for usage.");
             return ExitCodes.CouldNotRun;
         }
 
-        return result.Invoke(new InvocationConfiguration { Output = context.Output, Error = context.Error });
+        return await result.InvokeAsync(new InvocationConfiguration { Output = context.Output, Error = context.Error });
+    }
+
+    private static Command DriftCheckCommand(CliContext context)
+    {
+        var repoOption = new Option<string?>("--repo")
+        {
+            Description = "The consuming repository to check. Defaults to the current directory.",
+        };
+        var sourceOption = new Option<string>("--source")
+        {
+            Description = "Where releases are read from: the standards repository's git URL or a local path. "
+                + "Releases are its tags v<MAJOR.MINOR.PATCH>.",
+            DefaultValueFactory = _ => DriftDefaults.Source,
+        };
+        var packageOption = new Option<string>("--package-id")
+        {
+            Description = "The NuGet package that carries the gate configuration.",
+            DefaultValueFactory = _ => DriftDefaults.PackageId,
+        };
+        var skillOption = new Option<string>("--skill-name")
+        {
+            Description = "The installed skill's directory name under .github/skills/ (or .github/upgrades/skills/, "
+                + ".claude/skills/, .agents/skills/).",
+            DefaultValueFactory = _ => DriftDefaults.SkillName,
+        };
+        var pinnedOption = new Option<string?>("--pinned-version")
+        {
+            Description = "Use this pinned version instead of reading the repository's package reference and skill.",
+        };
+        var latestOption = new Option<string?>("--latest-version")
+        {
+            Description = "Use this as the latest release instead of listing the source's tags (for an offline or mirrored setup).",
+        };
+
+        var command = new Command(
+            "drift-check",
+            "Fail when a consuming repository's pinned standards version is behind the latest release (printing what "
+            + "changed), or when its skill and its package pin different versions.")
+        {
+            repoOption,
+            sourceOption,
+            packageOption,
+            skillOption,
+            pinnedOption,
+            latestOption,
+        };
+
+        command.SetAction((parseResult, cancellationToken) => DriftCheckAsync(
+            context,
+            parseResult.GetValue(repoOption),
+            parseResult.GetValue(sourceOption)!,
+            parseResult.GetValue(packageOption)!,
+            parseResult.GetValue(skillOption)!,
+            parseResult.GetValue(pinnedOption),
+            parseResult.GetValue(latestOption),
+            cancellationToken));
+        return command;
+    }
+
+    private static async Task<int> DriftCheckAsync(
+        CliContext context,
+        string? repo,
+        string source,
+        string packageId,
+        string skillName,
+        string? pinned,
+        string? latest,
+        CancellationToken cancellationToken)
+    {
+        var reporter = context.CreateReporter();
+        var repository = Path.GetFullPath(repo ?? ".", context.CurrentDirectory);
+        if (!Directory.Exists(repository))
+        {
+            reporter.Fail($"the repository to check, {repository}, does not exist");
+            return ExitCodes.CouldNotRun;
+        }
+
+        SemanticVersion? pinnedVersion = null;
+        SemanticVersion? latestVersion = null;
+        if ((pinned is not null && !SemanticVersion.TryParse(pinned, out pinnedVersion))
+            || (latest is not null && !SemanticVersion.TryParse(latest, out latestVersion)))
+        {
+            reporter.Fail("--pinned-version and --latest-version take a MAJOR.MINOR.PATCH version");
+            return ExitCodes.CouldNotRun;
+        }
+
+        using var releases = new GitReleaseSource(ResolveSource(source, context.CurrentDirectory));
+        var result = await DriftChecker.CheckAsync(
+            new DriftOptions(repository, packageId, skillName, pinnedVersion, latestVersion),
+            releases,
+            cancellationToken);
+
+        await DriftReport.WriteAsync(result, context, reporter, releases.Description);
+        return result.ExitCode;
+    }
+
+    /// <summary>A URL (https, ssh, git, file, or scp-style) is passed to git as is; anything else is a local path.</summary>
+    internal static string ResolveSource(string source, string currentDirectory)
+    {
+        if (Uri.TryCreate(source, UriKind.Absolute, out var uri) && uri.Scheme is "https" or "http" or "ssh" or "git" or "file")
+        {
+            return source;
+        }
+
+        var scpLike = source.Contains('@', StringComparison.Ordinal) && source.Contains(':', StringComparison.Ordinal);
+        return scpLike ? source : Path.GetFullPath(source, currentDirectory);
     }
 
     private static int Validate(CliContext context, DirectoryInfo? rootDirectory)

@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A pin below every released version: always behind. -->
+    <GlobalPackageReference Include="SecondKey.Standards" Version="0.0.1" />
+  </ItemGroup>
+</Project>

@@ -8,5 +8,6 @@
 # every gate enforces, so an unreviewed change here reaches every consumer at once.
 /standards/             @konradcinkusz
 /catalog/               @konradcinkusz
+/generated/             @konradcinkusz
 /src/                   @konradcinkusz
 /.github/workflows/     @konradcinkusz

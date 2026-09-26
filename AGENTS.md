@@ -13,20 +13,33 @@ the gate.
   constitution stays the authority.
 - Decisions and their reasons are in `docs/adr/`. A change that reverses one updates the ADR.
 
-## Checks
+## Generated output
+
+Nothing under `generated/` is written by hand.
+
+| To change | Edit | Then |
+|---|---|---|
+| A rule | `standards/<id>-<slug>.md` | `generate` |
+| The pack's version, the skill's name or description, the package | `catalog/pack.json` | `generate` |
+| The skill's hand-written body | `catalog/skill.template.md` | `generate` |
+| What a version changed | `CHANGELOG.md` | — |
 
 ```sh
 dotnet test
 dotnet run --project src/SecondKey.Standards.Generator -- validate
+dotnet run --project src/SecondKey.Standards.Generator -- generate          # then commit generated/
+dotnet run --project src/SecondKey.Standards.Generator -- generate --check  # what CI runs
 ```
 
-Both run in CI on every pull request. A rule change that does not validate does not merge.
+A content change to a version `CHANGELOG.md` dates is refused until the version is bumped; see the
+README's "Versioning" for what each bump means.
 
 ## Conventions
 
 - A rule states what migrated code must or must not do, why, and shows a non-compliant and a
   compliant example. Technical claims cite the primary source (Microsoft documentation, the
-  constitution) in `## References`.
+  constitution) in `## References`. Rule bodies use absolute links only: they are copied into the
+  skill's `references/`.
 - A Portcullis diagnostic is added to `catalog/pack.json` only once the gate ships it.
 - The tool's own code follows the rules it publishes: ordinal string comparison, explicit culture
   (enforced as build errors by `.editorconfig`).

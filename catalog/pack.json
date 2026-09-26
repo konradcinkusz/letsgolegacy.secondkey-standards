@@ -1,6 +1,19 @@
 {
-  "$comment": "Hand-authored pack metadata. The rules themselves live in standards/*.md; this file holds the closed vocabularies they are validated against. See standards/README.md and docs/adr/0001-standards-source-format.md.",
+  "$comment": "Hand-authored pack metadata. The rules themselves live in standards/*.md; this file holds what is true of the pack as a whole (version, skill, package) and the closed vocabularies the rules are validated against. See standards/README.md and docs/adr/0001-standards-source-format.md.",
   "name": "secondkey-standards",
+  "version": "0.1.0",
+  "repository": "https://github.com/konradcinkusz/letsgolegacy.secondkey-standards",
+  "constitution": "https://github.com/konradcinkusz/architecture-standards/blob/main/docs/architecture/00-REFERENCE-ARCHITECTURE.md",
+  "skill": {
+    "name": "applying-dotnet-migration-standards",
+    "description": "Applies the Second Key migration standards while a .NET Framework application is upgraded to .NET 10 or another modern .NET version. Preserves observable behaviour and records a behaviour flag instead of fixing a suspected defect; replaces System.Web, HttpContext.Current, ConfigurationManager and blocking on tasks; makes string comparison and culture explicit because .NET Framework uses NLS and modern .NET uses ICU; keeps EF6 query, loading and validation behaviour; keeps routes, JSON shape and cookies; names the diagnostics the Portcullis gate checks. Use for any .NET Framework to .NET upgrade, ASP.NET MVC or Web API to ASP.NET Core migration, EF6 to EF Core port or web.config to appsettings.json move, and whenever asked to upgrade to .NET 10, migrate from .NET Framework, modernize a solution, or follow the migration standards.",
+    "discovery": "preload",
+    "traits": ".NET|CSharp"
+  },
+  "package": {
+    "id": "SecondKey.Standards",
+    "description": "Analyzer configuration for the Second Key migration standards: sets the severity of every Portcullis and .NET SDK diagnostic that checks a standard, through a global analyzer config that the package's build props add to every build."
+  },
   "categories": [
     "hosting",
     "layering",

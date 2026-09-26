@@ -20,3 +20,8 @@
 # than classifying the repository by its generator.
 standards/** linguist-documentation=true
 docs/**      linguist-documentation=true
+
+# The generated tree is the generator's output (secondkey-standards generate). Collapsing it in
+# diffs keeps a one-line rule change reviewable instead of burying it under the regenerated files;
+# it is still diffable with `git diff --text`.
+generated/** linguist-generated=true

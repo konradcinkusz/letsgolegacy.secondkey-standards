@@ -82,6 +82,8 @@ While its entry says `Unreleased`, a version has not been tagged and may still c
 
 **Releasing:** replace `Unreleased` with the date in `CHANGELOG.md`, run `generate`, merge, and tag
 `v<version>` on `main`. CI checks on the tag that it matches the pack version and the changelog.
+The footers of the generated skill and its reference files link to their sources at that tag, so
+those links resolve only once the version is tagged.
 
 ## Consuming the analyzer configuration
 
